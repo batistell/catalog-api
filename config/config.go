@@ -72,18 +72,6 @@ func getEnvString(key string, defaultValue ...string) string {
 	return value
 }
 
-func getEnvBool(key string, defaultValue ...bool) bool {
-	valueStr := getEnvString(key)
-	value, err := strconv.ParseBool(valueStr)
-	if err != nil {
-		if len(defaultValue) > 0 {
-			return defaultValue[0]
-		}
-		panic(ErrInvalidConfig)
-	}
-	return value
-}
-
 func getEnvInt(key string, defaultValue ...int) int {
 	valueStr := getEnvString(key)
 	value, err := strconv.Atoi(valueStr)
