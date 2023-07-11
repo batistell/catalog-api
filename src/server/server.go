@@ -7,7 +7,7 @@ import (
 	"github.com/batistell/catalog-api/src/repositories"
 	"github.com/batistell/catalog-api/src/services"
 	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/recover"
+	"github.com/gofiber/swagger"
 	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -33,12 +33,14 @@ func (s *Server) Run(logger *logrus.Logger) error {
 		JSONEncoder: json.Marshal,
 		JSONDecoder: json.Unmarshal,
 	})
-	app.Use(recover.New())
+	//app.Use(recover.New())
 
 	catalogRepository := repositories.NewCatalogRepository(s.config, s.db)
 	catalogService := services.NewCatalogService(s.config, catalogRepository)
 	catalogHandler := handlers.NewCatalogHandler(s.config, catalogService)
 
+	// Serve the Swagger documentation
+	app.Get("/swagger/*", swagger.HandlerDefault)
 	app.Get("/health", healthz)
 	app.Post("/add", catalogHandler.AddProduct)
 

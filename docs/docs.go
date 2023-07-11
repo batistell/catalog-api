@@ -10,13 +10,21 @@ const docTemplate = `{
     "info": {
         "description": "{{escape .Description}}",
         "title": "{{.Title}}",
-        "contact": {},
+        "termsOfService": "http://swagger.io/terms/",
+        "contact": {
+            "name": "API Support",
+            "email": "batistell.labs@gmail.com"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
         "version": "{{.Version}}"
     },
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/products": {
+        "/add": {
             "post": {
                 "description": "Add a new product to the catalog",
                 "consumes": [
@@ -36,7 +44,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/main.Product"
+                            "$ref": "#/definitions/handlers.Product"
                         }
                     }
                 ],
@@ -44,13 +52,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/main.ProductResponse"
+                            "$ref": "#/definitions/handlers.ProductResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/main.ErrorResponse"
+                            "$ref": "#/definitions/handlers.ErrorResponse"
                         }
                     }
                 }
@@ -58,7 +66,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "main.ErrorResponse": {
+        "handlers.ErrorResponse": {
             "type": "object",
             "properties": {
                 "message": {
@@ -66,7 +74,7 @@ const docTemplate = `{
                 }
             }
         },
-        "main.Product": {
+        "handlers.Product": {
             "type": "object",
             "properties": {
                 "description": {
@@ -83,11 +91,11 @@ const docTemplate = `{
                 }
             }
         },
-        "main.ProductResponse": {
+        "handlers.ProductResponse": {
             "type": "object",
             "properties": {
                 "data": {
-                    "$ref": "#/definitions/main.Product"
+                    "$ref": "#/definitions/handlers.Product"
                 },
                 "message": {
                     "type": "string"
@@ -99,12 +107,12 @@ const docTemplate = `{
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
-	Version:          "",
+	Version:          "1.0",
 	Host:             "",
-	BasePath:         "",
+	BasePath:         "/",
 	Schemes:          []string{},
-	Title:            "",
-	Description:      "",
+	Title:            "Catalog API",
+	Description:      "API for Managing Products from Catalog.",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",

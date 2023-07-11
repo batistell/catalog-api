@@ -1,10 +1,11 @@
+basePath: /
 definitions:
-  main.ErrorResponse:
+  handlers.ErrorResponse:
     properties:
       message:
         type: string
     type: object
-  main.Product:
+  handlers.Product:
     properties:
       description:
         type: string
@@ -15,17 +16,26 @@ definitions:
       price:
         type: number
     type: object
-  main.ProductResponse:
+  handlers.ProductResponse:
     properties:
       data:
-        $ref: '#/definitions/main.Product'
+        $ref: '#/definitions/handlers.Product'
       message:
         type: string
     type: object
 info:
-  contact: { }
+  contact:
+    email: batistell.labs@gmail.com
+    name: API Support
+  description: API for Managing Products from Catalog.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Catalog API
+  version: "1.0"
 paths:
-  /products:
+  /add:
     post:
       consumes:
         - application/json
@@ -36,18 +46,18 @@ paths:
           name: product
           required: true
           schema:
-            $ref: '#/definitions/main.Product'
+            $ref: '#/definitions/handlers.Product'
       produces:
         - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/main.ProductResponse'
+            $ref: '#/definitions/handlers.ProductResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/main.ErrorResponse'
+            $ref: '#/definitions/handlers.ErrorResponse'
       summary: Add a new product
       tags:
         - Products
