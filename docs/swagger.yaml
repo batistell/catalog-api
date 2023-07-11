@@ -1,0 +1,65 @@
+basePath: /
+definitions:
+  main.ErrorResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  main.Product:
+    properties:
+      description:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      price:
+        type: number
+    type: object
+  main.ProductResponse:
+    properties:
+      data:
+        $ref: '#/definitions/main.Product'
+      message:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: catalog@api.com
+    name: API Support
+  description: API for managing the product catalog.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Catalog API
+  version: "1.0"
+paths:
+  /products:
+    post:
+      consumes:
+        - application/json
+      description: Add a new product to the catalog
+      parameters:
+        - description: Product object to add
+          in: body
+          name: product
+          required: true
+          schema:
+            $ref: '#/definitions/main.Product'
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/main.ProductResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/main.ErrorResponse'
+      summary: Add a new product
+      tags:
+        - Products
+swagger: "2.0"
