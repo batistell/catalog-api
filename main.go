@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/batistell/catalog-api/config"
+	_ "github.com/batistell/catalog-api/docs"
 	. "github.com/batistell/catalog-api/src/server"
 	"github.com/sirupsen/logrus"
 	"os"
