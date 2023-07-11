@@ -1,13 +1,10 @@
 package main
 
 import (
-	"context"
 	"github.com/batistell/catalog-api/config"
+	. "github.com/batistell/catalog-api/src/server"
 	"github.com/sirupsen/logrus"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 	"os"
-	"time"
 )
 
 func main() {
@@ -24,22 +21,16 @@ func main() {
 	logger.SetReportCaller(true)
 	logger.SetOutput(os.Stdout)
 
-	// MongoDB connection
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-
-	client, err := mongo.Connect(ctx, options.Client().ApplyURI(cfg.MongoDB.URI))
+	db, err := NewMongoDB(logger, cfg)
 	if err != nil {
-		logger.WithError(err).Error("Failed to connect to MongoDB")
-		return
+		logger.WithError(err).Error("Error NewMongoDB")
 	}
-	defer func() {
-		if err := client.Disconnect(ctx); err != nil {
-			logger.WithError(err).Error("Failed to disconnect from MongoDB")
-		}
-	}()
 
-	logger.Info("Connected to MongoDB")
+	server := NewServer(cfg, *db)
+	err = server.Run(logger)
+	if err != nil {
+		logger.WithError(err).Error("Error Running Server")
+	}
 
 	logger.Info("Application initialized")
 }
