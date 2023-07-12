@@ -4,10 +4,12 @@ import (
 	"github.com/batistell/catalog-api/config"
 	model "github.com/batistell/catalog-api/src/models"
 	"github.com/batistell/catalog-api/src/repositories"
+	"github.com/gofiber/fiber/v2"
+	"github.com/sirupsen/logrus"
 )
 
 type CatalogService interface {
-	AddProduct(product *model.Product) *model.Error
+	AddProducts(messageID string, products []model.Product) *model.Error
 	GetAllProducts() ([]*model.Product, *model.Error)
 	GetProductByID(id string) (*model.Product, *model.Error)
 	UpdateProduct(id string, updatedProduct *model.Product) (*model.Product, *model.Error)
@@ -23,14 +25,15 @@ func NewCatalogService(cfg *config.Config, catalogRepository repositories.Catalo
 	return &catalogService{cfg: cfg, catalogRepository: catalogRepository}
 }
 
-func (s *catalogService) AddProduct(product *model.Product) *model.Error {
-	// Validate the product data
+func (s *catalogService) AddProducts(messageID string, products []model.Product) *model.Error {
+	for _, product := range products {
+		if err := product.ValidateProductData(); err != nil {
+			logrus.WithField("messageId", messageID).Error(err)
+			return model.NewError(fiber.StatusBadRequest, err.Error())
+		}
 
-	// Generate a unique ID for the product
-
-	// Save the product to the catalog repository
-
-	// Handle any errors and return an appropriate response
+		s.catalogRepository.AddProduct()
+	}
 
 	return nil
 }
