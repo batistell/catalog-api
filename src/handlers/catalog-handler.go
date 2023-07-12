@@ -22,31 +22,35 @@ func NewCatalogHandler(cfg *config.Config, catalogService services.CatalogServic
 	return &catalogHandler{cfg: cfg, catalogService: catalogService}
 }
 
-// AddProduct handles the request to add a new product
-// @Summary Add a new product
-// @Description Add a new product to the catalog
+// AddProduct handles the request to add new products
+// @Summary Add new products
+// @Description Add new products to the catalog
 // @Tags Products
 // @Accept json
 // @Produce json
-// @Param product body model.Product true "Product object to add"
+// @Param products body []model.Product true "Products array to add"
 // @Success 200 {object} model.ProductResponse
 // @Failure 400 {object} model.ErrorResponse
 // @Router /add [post]
 func (h catalogHandler) AddProduct(c *fiber.Ctx) error {
 	messageID := uuid.New().String()
-	logrus.WithField("messageId", messageID).Info("Starting AddProduct request")
+	logrus.WithField("messageId", messageID).Info("Starting AddProducts request")
 
-	// Parse the request body to get the product details
-	product := new(model.Product)
-	if err := c.BodyParser(product); err != nil {
+	// Parse the request body to get the products details
+	var products []model.Product
+	if err := c.BodyParser(&products); err != nil {
 		logrus.WithField("messageId", messageID).Error(err)
 		return model.NewError(fiber.StatusBadRequest, err.Error()).ToResponse(c)
 	}
-	// TODO | 11-07-2023 | gabbatiste | Add the product to the catalog
 
-	logrus.WithField("messageId", messageID).Info("AddProduct request completed successfully")
+	if err := h.catalogService.AddProducts(messageID, products); err != nil {
+		logrus.WithField("messageId", messageID).Error(err)
+		return err.ToResponse(c)
+	}
+
+	logrus.WithField("messageId", messageID).Info("AddProducts request completed successfully")
 	return c.JSON(model.ProductResponse{
-		Message: "Product added successfully",
+		Message: "Products added successfully",
 		Data:    nil,
 	})
 }
