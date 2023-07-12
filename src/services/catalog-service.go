@@ -40,42 +40,65 @@ func (s *catalogService) AddProducts(messageID string, products []model.Product)
 
 func (s *catalogService) GetAllProducts() ([]*model.Product, *model.Error) {
 	// Retrieve all products from the catalog repository
+	products, err := s.catalogRepository.GetAllProducts()
+	if err != nil {
+		return nil, model.NewError(fiber.StatusInternalServerError, "Failed to retrieve products")
+	}
 
-	// Handle any errors and return the products or an error response
-
-	return nil, nil
+	return products, nil
 }
 
 func (s *catalogService) GetProductByID(id string) (*model.Product, *model.Error) {
 	// Validate the product ID
+	if id == "" {
+		return nil, model.NewError(fiber.StatusBadRequest, "Invalid product ID")
+	}
 
 	// Retrieve the product by ID from the catalog repository
+	product, err := s.catalogRepository.GetProductByID(id)
+	if err != nil {
+		return nil, model.NewError(fiber.StatusInternalServerError, "Failed to retrieve product")
+	}
 
-	// Handle any errors and return the product or an error response
-
-	return nil, nil
+	return product, nil
 }
 
 func (s *catalogService) UpdateProduct(id string, updatedProduct *model.Product) (*model.Product, *model.Error) {
 	// Validate the product ID and updated product data
+	if id == "" {
+		return nil, model.NewError(fiber.StatusBadRequest, "Invalid product ID")
+	}
+	if updatedProduct == nil {
+		return nil, model.NewError(fiber.StatusBadRequest, "Invalid updated product data")
+	}
 
 	// Retrieve the existing product by ID from the catalog repository
+	existingProduct, err := s.catalogRepository.GetProductByID(id)
+	if err != nil {
+		return nil, model.NewError(fiber.StatusInternalServerError, "Failed to retrieve product")
+	}
 
 	// Update the product data
+	// TODO: Implement the logic to update the product fields based on the updatedProduct data
 
 	// Save the updated product to the catalog repository
+	if err := s.catalogRepository.UpdateProduct(*existingProduct); err != nil {
+		return nil, model.NewError(fiber.StatusInternalServerError, "Failed to update product")
+	}
 
-	// Handle any errors and return the updated product or an error response
-
-	return nil, nil
+	return existingProduct, nil
 }
 
 func (s *catalogService) DeleteProduct(id string) *model.Error {
 	// Validate the product ID
+	if id == "" {
+		return model.NewError(fiber.StatusBadRequest, "Invalid product ID")
+	}
 
 	// Delete the product from the catalog repository
-
-	// Handle any errors and return an appropriate response
+	if err := s.catalogRepository.DeleteProduct(id); err != nil {
+		return model.NewError(fiber.StatusInternalServerError, "Failed to delete product")
+	}
 
 	return nil
 }
