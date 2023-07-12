@@ -15,7 +15,7 @@ import (
 // Server struct
 type Server struct {
 	config *config.Config
-	db     mongo.Client
+	db     mongo.Database
 }
 
 func healthz(c *fiber.Ctx) error {
@@ -23,7 +23,7 @@ func healthz(c *fiber.Ctx) error {
 }
 
 // NewServer New Server constructor
-func NewServer(config *config.Config, db mongo.Client) *Server {
+func NewServer(config *config.Config, db mongo.Database) *Server {
 	return &Server{config: config, db: db}
 }
 

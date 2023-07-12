@@ -26,13 +26,22 @@ func NewCatalogService(cfg *config.Config, catalogRepository repositories.Catalo
 }
 
 func (s *catalogService) AddProducts(messageID string, products []model.Product) *model.Error {
+	if products == nil {
+		logrus.WithField("messageId", messageID).Error("Invalid product data")
+		return model.NewError(fiber.StatusBadRequest, "Invalid product data")
+	}
+
 	for _, product := range products {
 		if err := product.ValidateProductData(); err != nil {
 			logrus.WithField("messageId", messageID).Error(err)
 			return model.NewError(fiber.StatusBadRequest, err.Error())
 		}
+	}
 
-		s.catalogRepository.AddProduct()
+	err := s.catalogRepository.AddProducts(products)
+	if err != nil {
+		logrus.WithField("messageId", messageID).Error(err)
+		return model.NewError(fiber.StatusInternalServerError, "Failed to add products")
 	}
 
 	return nil
@@ -82,7 +91,7 @@ func (s *catalogService) UpdateProduct(id string, updatedProduct *model.Product)
 	// TODO: Implement the logic to update the product fields based on the updatedProduct data
 
 	// Save the updated product to the catalog repository
-	if err := s.catalogRepository.UpdateProduct(*existingProduct); err != nil {
+	if err := s.catalogRepository.UpdateProduct(existingProduct); err != nil {
 		return nil, model.NewError(fiber.StatusInternalServerError, "Failed to update product")
 	}
 
