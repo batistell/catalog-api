@@ -24,7 +24,7 @@ func NewCatalogRepository(cfg *config.Config, db mongo.Client) CatalogRepository
 }
 
 func (r *catalogRepository) GetAllProducts() ([]*model.Product, *model.Error) {
-	//TODO implement me
+
 	panic("implement me")
 }
 
